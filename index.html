@@ -1,0 +1,40 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="styles/main.css"/>
+  <title>working-hours</title>
+</head>
+
+
+<body>
+
+<div class="container" >
+  <div class="clock" id="clock">
+    <span id="hours">00</span>
+    <span id="minutes">00</span>
+    <span id="seconds">00</span>
+  </div>
+  
+  <div class="menu">
+    <span class="menuItem" id="button" >Start</span>
+  </div>
+
+  <div class="log" id="log">
+    
+  </div>
+</div>
+  
+  
+
+</body>
+
+<script type="module">
+  import {buttonClick} from "./js/main.js";
+  import {init} from "./js/main.js";
+  
+  document.getElementById("button").addEventListener("click", buttonClick);
+  window.addEventListener("load", init);
+</script>
+
+
+</html>
