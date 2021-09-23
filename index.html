@@ -31,9 +31,11 @@
 <script type="module">
   import {buttonClick} from "./js/main.js";
   import {init} from "./js/main.js";
+  import {startStopButtonKeyHandler} from "./js/main.js";
   
-  document.getElementById("button").addEventListener("click", buttonClick);
+  document.getElementById("button").addEventListener("click", buttonClick);  
   window.addEventListener("load", init);
+  document.addEventListener('keydown', startStopButtonKeyHandler);
 </script>
 
 

@@ -4,6 +4,28 @@ var sw;
 var timerId;
 var DateToWorkingHoursMap;
 
+// key handlers
+export function startStopButtonKeyHandler(event)
+{
+    console.log("keyhandler");
+    console.log(event.key);
+    if(document.getElementById("button").innerHTML == "Start" &&
+       's' == event.key)
+    {
+        console.log("start");
+        document.getElementById("button").innerHTML = "Stop";
+        start();
+    }
+    else if(document.getElementById("button").innerHTML == "Stop" &&
+       's' == event.key)
+    {
+        document.getElementById("button").innerHTML = "Start";
+        console.log("stop");
+        stop();
+    }
+}
+
+
 function getLengthAdjustedTimeUnitString(timeUnitStr)
 {
     if(1 == timeUnitStr.length)
