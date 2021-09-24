@@ -158,17 +158,17 @@ function getDateWorkingHoursTable() {
         
         ret += "<tr>";
         //console.log(key);
-        ret += "<td>";
+        ret += "<td class='logItem'>";
         ret += day;
         ret += "</td>";
 
         var dateFormat1 = date.getDate() + " " + month + " " + date.getFullYear();
-        ret += "<td>";
+        ret += "<td class='logItem'>";
         ret += " | ";
         ret += dateFormat1;
         ret += "</td>";
         
-        ret += "<td>";
+        ret += "<td class='logItem'>";
         ret += " | " + workingHours
         ret += "</td>";
 
