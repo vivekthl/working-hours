@@ -207,12 +207,39 @@ function substract(subMinutes)
     console.log("substract" + minutes);
        
     var hours = parseInt(sw.getHours());
-    var minutes = parseInt(sw.getMinutes() - subMinutes);
+    var minutes = parseInt(sw.getMinutes());
     var seconds = parseInt(sw.getSeconds());
 
+    if(minutes < 1)
+    {
+        return;
+    }
+    
+    var newMinutes = minutes - subMinutes;
+    var timeElapsedInSeconds = (hours*3600 +
+                                newMinutes*60 +
+                                seconds);
+
+    console.log("timeElapsedInSeconds" + timeElapsedInSeconds);
+    
+    sw.setTime(timeElapsedInSeconds);
+}
+
+export function add1()
+{
+    add(1);
+}
+
+function add(addMinutes)
+{
+    console.log("add: " + minutes);
+       
+    var hours = parseInt(sw.getHours());
+    var newMinutes = parseInt(sw.getMinutes()) + addMinutes;
+    var seconds = parseInt(sw.getSeconds());
     
     var timeElapsedInSeconds = (hours*3600 +
-                                minutes*60 +
+                                newMinutes*60 +
                                 seconds);
 
     console.log("timeElapsedInSeconds" + timeElapsedInSeconds);
