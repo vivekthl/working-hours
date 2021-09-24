@@ -195,3 +195,28 @@ function loadMap()
         console.log(key + ' = ' + value)
     }    
 }
+
+export function substract1()
+{
+    substract(1);
+}
+
+function substract(minutes)
+{
+    console.log("substract" + minutes);
+    
+    
+/*
+    var hours = sw.getHours();
+    var minutes = sw.getMinutes();
+    var seconds = sw.getSeconds();
+
+    var timeElapsedInSeconds = (parseInt(hoursStr)*3600 +
+                                parseInt(minutesStr)*60 +
+                                parseInt(secondsStr));
+
+    console.log("timeElapsedInSeconds" + timeElapsedInSeconds);
+    
+    sw.setTime(timeElapsedInSeconds);
+*/
+}
