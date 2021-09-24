@@ -19,6 +19,10 @@ body {
     font-size:50px;
 }
 
+.menuAddSub {
+/*    border:1px solid grey;*/
+}
+
 .menuItem {
     cursor:pointer;
     margin-bottom:10%;
@@ -50,5 +54,6 @@ th{
 
 td{
     padding-right:200x;
+    border-left:1px solid  #d9d9d9;
     border-bottom:1px solid #d9d9d9;
 }
