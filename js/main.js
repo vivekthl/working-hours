@@ -199,24 +199,23 @@ function loadMap()
 export function substract1()
 {
     substract(1);
+    updateClock();
 }
 
-function substract(minutes)
+function substract(subMinutes)
 {
     console.log("substract" + minutes);
-    
-    
-/*
-    var hours = sw.getHours();
-    var minutes = sw.getMinutes();
-    var seconds = sw.getSeconds();
+       
+    var hours = parseInt(sw.getHours());
+    var minutes = parseInt(sw.getMinutes() - subMinutes);
+    var seconds = parseInt(sw.getSeconds());
 
-    var timeElapsedInSeconds = (parseInt(hoursStr)*3600 +
-                                parseInt(minutesStr)*60 +
-                                parseInt(secondsStr));
+    
+    var timeElapsedInSeconds = (hours*3600 +
+                                minutes*60 +
+                                seconds);
 
     console.log("timeElapsedInSeconds" + timeElapsedInSeconds);
     
     sw.setTime(timeElapsedInSeconds);
-*/
 }
