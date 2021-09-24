@@ -16,7 +16,8 @@
   </div>
   
   <div class="menu">
-    <span class="menuItem" id="button" >Start</span><br><br>
+    <span class="menuItem" id="button" >Start</span><span> &nbsp;</span>
+    <span class="menuItem" id="clear" >Clear</span><br><br>
 
     <table class="menuAddSub">
     <tr>
@@ -48,6 +49,7 @@
   import {startStopButtonKeyHandler} from "./js/main.js";
   import {substract1} from "./js/main.js";
   import {add1} from "./js/main.js";
+  import {clear} from "./js/main.js";
   
   document.getElementById("button").addEventListener("click", buttonClick);  
   window.addEventListener("load", init);
@@ -55,6 +57,7 @@
 
   document.getElementById("sub1").addEventListener("click", substract1);
   document.getElementById("add1").addEventListener("click", add1);
+  document.getElementById("clear").addEventListener("click", clear);
 </script>
 
 

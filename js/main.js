@@ -246,3 +246,14 @@ function add(addMinutes)
     
     sw.setTime(timeElapsedInSeconds);
 }
+
+export function clear()
+{
+    console.log("clear " + minutes);
+    var timeElapsedInSeconds = 0;
+    
+    console.log("timeElapsedInSeconds" + timeElapsedInSeconds);
+    
+    sw.setTime(timeElapsedInSeconds);
+    
+}
