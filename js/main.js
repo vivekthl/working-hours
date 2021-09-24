@@ -159,9 +159,15 @@ function getDateWorkingHoursTable() {
         ret += "<tr>";
         //console.log(key);
         ret += "<td>";
-        ret += day + " | " + date.getDate() + " " + month + " " + date.getFullYear();
+        ret += day;
         ret += "</td>";
 
+        var dateFormat1 = date.getDate() + " " + month + " " + date.getFullYear();
+        ret += "<td>";
+        ret += " | ";
+        ret += dateFormat1;
+        ret += "</td>";
+        
         ret += "<td>";
         ret += " | " + workingHours
         ret += "</td>";
