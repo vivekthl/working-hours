@@ -46,7 +46,7 @@ function updateClock()
     document.getElementById("minutes").innerHTML = getLengthAdjustedTimeUnitString(minutesStr);
     document.getElementById("seconds").innerHTML = getLengthAdjustedTimeUnitString(secondsStr);
 
-    //console.log(hoursStr + " " + minutesStr + " " + secondsStr);
+    console.log("time: " + hoursStr + " " + minutesStr + " " + secondsStr);
     
     var nowDate = new Date(); 
     var date = (getLengthAdjustedTimeUnitString((nowDate.getFullYear()).toString()) + '/' +
@@ -223,6 +223,7 @@ function substract(subMinutes)
     console.log("timeElapsedInSeconds" + timeElapsedInSeconds);
     
     sw.setTime(timeElapsedInSeconds);
+    updateClock();
 }
 
 export function add1()
@@ -235,16 +236,35 @@ function add(addMinutes)
     console.log("add: " + minutes);
        
     var hours = parseInt(sw.getHours());
-    var newMinutes = parseInt(sw.getMinutes()) + addMinutes;
+    var minutes = parseInt(sw.getMinutes());
     var seconds = parseInt(sw.getSeconds());
-    
+
     var timeElapsedInSeconds = (hours*3600 +
+                                minutes*60 +
+                                seconds);
+
+    console.log("before-time:"+ timeElapsedInSeconds);
+    
+    var newMinutes = minutes + addMinutes;
+
+    console.log("newMinutes:" + newMinutes);
+    
+    timeElapsedInSeconds = (hours*3600 +
                                 newMinutes*60 +
                                 seconds);
 
-    console.log("timeElapsedInSeconds" + timeElapsedInSeconds);
+    console.log("after-time:"+ timeElapsedInSeconds);
     
-    sw.setTime(timeElapsedInSeconds);
+    
+    sw.setTime(timeElapsedInSeconds);    
+    updateClock();
+
+    var hoursStr = (sw.getHours()).toString();
+    var minutesStr = (sw.getMinutes()).toString();
+    var secondsStr = (sw.getSeconds()).toString();
+
+    console.log("time: " + hoursStr + " " + minutesStr + " " + secondsStr);
+
 }
 
 export function clear()
@@ -255,5 +275,5 @@ export function clear()
     console.log("timeElapsedInSeconds" + timeElapsedInSeconds);
     
     sw.setTime(timeElapsedInSeconds);
-    
+    updateClock();
 }

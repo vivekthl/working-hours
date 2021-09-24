@@ -77,6 +77,14 @@ export class Stopwatch
 
     setTime(timeElapsedInSeconds){
         this.timeElapsed = timeElapsedInSeconds*1000;
+        this.updateForTimeElapsed();
+    }
+
+    updateForTimeElapsed(){
+        var timeElapsedInSeconds = Math.floor(this.timeElapsed/1000);
+        this.seconds = timeElapsedInSeconds%60;
+        this.minutes = Math.floor(timeElapsedInSeconds/60)%60;
+        this.hours = Math.floor(timeElapsedInSeconds/3600)%24;
     }
     
     update()
