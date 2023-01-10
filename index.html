@@ -2,6 +2,7 @@
 
 <head>
   <link rel="stylesheet" href="styles/main.css"/>
+  <link id="favicon" rel="shortcut icon" type="image/png" href="resources/red.ico" />
   <title>Working Hours</title>
 </head>
 
@@ -47,16 +48,31 @@
   import {buttonClick} from "./js/main.js";
   import {init} from "./js/main.js";
   import {startStopButtonKeyHandler} from "./js/main.js";
+
   import {substract1} from "./js/main.js";
+  import {substract5} from "./js/main.js";
+  import {substract10} from "./js/main.js";
+  
   import {add1} from "./js/main.js";
+  import {add5} from "./js/main.js";
+  import {add10} from "./js/main.js";
+  
   import {clear} from "./js/main.js";
+
+  console.log("Module script is going to be executed... ");
   
   document.getElementById("button").addEventListener("click", buttonClick);  
   window.addEventListener("load", init);
   document.addEventListener('keydown', startStopButtonKeyHandler);
 
   document.getElementById("sub1").addEventListener("click", substract1);
+  document.getElementById("sub5").addEventListener("click", substract5);
+  document.getElementById("sub10").addEventListener("click", substract10);
+  
   document.getElementById("add1").addEventListener("click", add1);
+  document.getElementById("add5").addEventListener("click", add5);
+  document.getElementById("add10").addEventListener("click", add10);
+  
   document.getElementById("clear").addEventListener("click", clear);
 </script>
 
