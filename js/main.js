@@ -372,6 +372,11 @@ export function add10()
     add(10);
 }
 
+export function add1Hour()
+{
+    add(60);
+}
+
 
 function add(addMinutes)
 {

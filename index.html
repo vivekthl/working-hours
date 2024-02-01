@@ -23,16 +23,22 @@
 
     <table class="menuAddSub">
     <tr>
-      <td><span class="menuItem" id="sub1" >Sub 1</span> |</td>
-      <td><span class="menuItem" id="sub5" >Sub 5</span> |</td>
-      <td><span class="menuItem" id="sub10" >Sub 10</span></td>
+      <td><span class="menuItem" id="sub1" >Sub 1m</span> |</td>
+      <td><span class="menuItem" id="sub5" >Sub 5m</span> |</td>
+      <td><span class="menuItem" id="sub10" >Sub 10m</span></td>      
     </tr>
       
     <tr>
-      <td><span class="menuItem" id="add1" >Add 1</span> |</td>
-      <td><span class="menuItem" id="add5" >Add 5</span> |</td>
-      <td><span class="menuItem" id="add10" >Add 10</span> </td>
+      <td><span class="menuItem" id="add1" >Add 1m</span> |</td>
+      <td><span class="menuItem" id="add5" >Add 5m</span> |</td>
+      <td><span class="menuItem" id="add10" >Add 10m</span> </td>
     </tr>
+
+    <tr>
+      <td><span class="menuItem" id="sub1Hour" >Sub 1hr</span> |</td> 
+      <td><span class="menuItem" id="add1Hour" >Add 1hr</span> </td> 
+    </tr>
+    
     </table>
   </div>
 
@@ -60,6 +66,8 @@
   import {add1} from "./js/main.js";
   import {add5} from "./js/main.js";
   import {add10} from "./js/main.js";
+  import {add1Hour} from "./js/main.js";
+
   
   import {clear} from "./js/main.js";
 
@@ -76,6 +84,7 @@
   document.getElementById("add1").addEventListener("click", add1);
   document.getElementById("add5").addEventListener("click", add5);
   document.getElementById("add10").addEventListener("click", add10);
+  document.getElementById("add1Hour").addEventListener("click", add1Hour);  
   
   document.getElementById("clear").addEventListener("click", clear);
 </script>
