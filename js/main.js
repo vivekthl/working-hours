@@ -317,6 +317,11 @@ export function substract10()
     substract(10);
 }
 
+export function substract1Hour()
+{
+    substract(60);
+}
+
 
 function substract(subMinutes)
 {
