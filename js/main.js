@@ -95,13 +95,16 @@ function retrievePreviousCurrentDayData(){
 //    console.log("Fetched Time:" + hoursStr + " " + minutesStr + " " + secondsStr);
 }
 
+/*
 function retrievePreviousDaysData(){
     var outputDiv = document.getElementById("log");
     var outputStr = "";
 
     outputStr = getDateWorkingHoursTable();
     outputDiv.innerHTML = outputStr;
-}
+    }
+*/
+
 
 function reterievePreviousLogData(){
     if(!(typeof DateToWorkingHoursMap !== 'undefined')){
@@ -113,7 +116,7 @@ function reterievePreviousLogData(){
     }
 
     //RETRIEVE PREVIOUS DATA;
-    retrievePreviousDaysData();
+//    retrievePreviousDaysData();
 
     //reterieve data of previous days
     retrievePreviousCurrentDayData();
@@ -212,7 +215,7 @@ function convertWorkingHoursTimeElapsedInSecondsToStr(timeElapsedInSeconds){
     return timeString;
 }
 
-
+/*
 function getDateWorkingHoursTable() {
     var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -278,7 +281,7 @@ function getDateWorkingHoursTable() {
     var ret = "<table>" + tableRowListString   + "</table>";
     return ret;
 }
-
+*/
 
 function loadMap()
 {
