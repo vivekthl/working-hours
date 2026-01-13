@@ -110,7 +110,19 @@ function restoreTodayTime() {
 function renderWorkLog() {
     const logContainer = document.getElementById("log");
     logContainer.innerHTML = getDateWorkingHoursTable();
+    attachDeleteListeners(); // <--- attach events    
 }
+
+function attachDeleteListeners() {
+    const buttons = document.querySelectorAll(".deleteEntryBtn");
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const dateKey = btn.dataset.key;
+            deleteLogEntry(dateKey);
+        });
+    });
+}
+
 
 
 export function init() {
@@ -200,12 +212,32 @@ function convertWorkingHoursTimeElapsedInSecondsToStr(timeElapsedInSeconds){
     return timeString;
 }
 
-function renderDayRow(day, dateLabel, workingHours) {
+export function deleteLogEntry(dateKey) {
+    // Remove from Map
+    DateToWorkingHoursMap.delete(dateKey);
+
+    // Remove from localStorage
+    localStorage.removeItem(dateKey);
+
+    // Re-render the log
+    const logContainer = document.getElementById("log");
+    logContainer.innerHTML = getDateWorkingHoursTable();
+
+    // Re-attach delete listeners to the new buttons
+    attachDeleteListeners();
+}
+
+
+
+function renderDayRow(day, dateLabel, workingHours, dateKey) {
     return `
-        <tr>
-            <td class="logItem">${day}</td>
+        <tr data-date-key="${dateKey}">
+            <td class="logItem"> ${day}</td>
             <td class="logItem"> | ${dateLabel}</td>
             <td class="logItem"> | ${workingHours}</td>
+            <td class="logItem">
+                <button class="deleteEntryBtn" data-key="${dateKey}">X</button>
+            </td>
         </tr>
     `;
 }
@@ -234,14 +266,14 @@ function getDateWorkingHoursTable() {
     let lastWeek = null;
     let weeklyTotalSeconds = 0;
 
-    for (const [dateStr, workingHours] of entries) {
+    for (const [dateStr, workingHours] of entries)
+    {
         const date = new Date(dateStr);
         const week = date.getWeek();
 
         const dayName = DAYS[date.getDay()];
         const monthName = MONTHS[date.getMonth()];
         const dateLabel = `${pad(date.getDate())} ${monthName} ${date.getFullYear()}`;
-
 
         const daySeconds = convertWorkingHoursStrToTimeElapsedInSeconds(workingHours);
 
@@ -254,8 +286,10 @@ function getDateWorkingHoursTable() {
         weeklyTotalSeconds += daySeconds;
         lastWeek = week;
 
-        rows.push(renderDayRow(dayName, dateLabel, workingHours));
+        // Pass the dateKey so delete button knows which entry to remove
+        rows.push(renderDayRow(dayName, dateLabel, workingHours, dateStr));
     }
+
 
     // final week summary
     if (weeklyTotalSeconds > 0) {
