@@ -106,7 +106,7 @@ function retrievePreviousDaysData(){
 */
 
 
-function reterievePreviousLogData(){
+function retrievePreviousLogData(){
     if(!(typeof DateToWorkingHoursMap !== 'undefined')){
         DateToWorkingHoursMap = new Map();
         return;
@@ -118,7 +118,7 @@ function reterievePreviousLogData(){
     //RETRIEVE PREVIOUS DATA;
 //    retrievePreviousDaysData();
 
-    //reterieve data of previous days
+    //retrieve data of previous days
     retrievePreviousCurrentDayData();
 }
 
@@ -133,7 +133,7 @@ export function init(){
     console.log("new stopwatch instance set");
     sw = new Stopwatch();
     
-    reterievePreviousLogData();
+    retrievePreviousLogData();
 }
 
 function setFavicon(src){
