@@ -25,47 +25,51 @@ export function startStopButtonKeyHandler(event)
     }
 }
 
-
-function getLengthAdjustedTimeUnitString(timeUnitStr)
-{
-    if(1 == timeUnitStr.length)
-    {
-        return "0" + timeUnitStr;
-    }
-    return timeUnitStr;
+function pad(value) {
+    return String(value).padStart(2, "0");
 }
 
-function updateClock()
-{
-    var hoursStr = (sw.getHours()).toString();
-    var minutesStr = (sw.getMinutes()).toString();
-    var secondsStr = (sw.getSeconds()).toString();
+function restoreTimeFromString(timeStr) {
+    const [hours, minutes, seconds] = timeStr.split(":").map(Number);
 
-    
-    document.getElementById("hours").innerHTML = getLengthAdjustedTimeUnitString(hoursStr); ;
-    document.getElementById("minutes").innerHTML = getLengthAdjustedTimeUnitString(minutesStr);
-    document.getElementById("seconds").innerHTML = getLengthAdjustedTimeUnitString(secondsStr);
+    const elapsedSeconds =
+        hours * 3600 +
+        minutes * 60 +
+        seconds;
 
-//    console.log("time: " + hoursStr + " " + minutesStr + " " + secondsStr);
-    
-    var nowDate = new Date(); 
-    var date = (getLengthAdjustedTimeUnitString((nowDate.getFullYear()).toString()) + '/' +
-                getLengthAdjustedTimeUnitString((nowDate.getMonth()+1).toString()) + '/' +
-                getLengthAdjustedTimeUnitString((nowDate.getDate()).toString())); 
-
-//    console.log("Value before store: " + sw.getTimeAsString());
-    DateToWorkingHoursMap.set(date, sw.getTimeAsString());
-
-    for (let [key, value] of DateToWorkingHoursMap) {
-        localStorage.setItem(key, value);
-    }      
+    sw.setTime(elapsedSeconds);
+    updateDisplay();
 }
 
+function updateDisplay(){
+  document.getElementById("hours").innerHTML = pad(sw.getHours());
+  document.getElementById("minutes").innerHTML = pad(sw.getMinutes());
+  document.getElementById("seconds").innerHTML = pad(sw.getSeconds());
+}
+
+function updateClock() {
+    updateDisplay();
+    DateToWorkingHoursMap.set(getTodayKey(), sw.getTimeAsString());
+    persistData();
+    
+}
+
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())}`;
+}
+
+function persistData() {
+  for (const [key, value] of DateToWorkingHoursMap) {
+    localStorage.setItem(key, value);
+  }
+}
+/*
 function retrievePreviousCurrentDayData(){
     var nowDate = new Date(); 
-    var date = (getLengthAdjustedTimeUnitString((nowDate.getFullYear()).toString()) + '/' +
-                getLengthAdjustedTimeUnitString((nowDate.getMonth()+1).toString()) + '/' +
-                getLengthAdjustedTimeUnitString((nowDate.getDate()).toString()));     
+    var date = (pad((nowDate.getFullYear()).toString()) + '/' +
+                pad((nowDate.getMonth()+1).toString()) + '/' +
+                pad((nowDate.getDate()).toString()));     
 
     var workingHours = DateToWorkingHoursMap.get(date);
 
@@ -79,9 +83,9 @@ function retrievePreviousCurrentDayData(){
     var minutesStr = workingHoursSplitBySpace[1];
     var secondsStr = workingHoursSplitBySpace[2];
 
-    document.getElementById("hours").innerHTML = getLengthAdjustedTimeUnitString(hoursStr); ;
-    document.getElementById("minutes").innerHTML = getLengthAdjustedTimeUnitString(minutesStr);
-    document.getElementById("seconds").innerHTML = getLengthAdjustedTimeUnitString(secondsStr);
+    document.getElementById("hours").innerHTML = pad(hoursStr); ;
+    document.getElementById("minutes").innerHTML = pad(minutesStr);
+    document.getElementById("seconds").innerHTML = pad(secondsStr);
 
     //update internal clock
     var timeElapsedInSeconds = (parseInt(hoursStr)*3600 +
@@ -94,46 +98,27 @@ function retrievePreviousCurrentDayData(){
     
 //    console.log("Fetched Time:" + hoursStr + " " + minutesStr + " " + secondsStr);
 }
-
-/*
-function retrievePreviousDaysData(){
-    var outputDiv = document.getElementById("log");
-    var outputStr = "";
-
-    outputStr = getDateWorkingHoursTable();
-    outputDiv.innerHTML = outputStr;
-    }
 */
 
-
-function retrievePreviousLogData(){
-    if(!(typeof DateToWorkingHoursMap !== 'undefined')){
-        DateToWorkingHoursMap = new Map();
-        return;
-    }
-    if(DateToWorkingHoursMap.size == 0){
-        return;
-    }
-
-    //RETRIEVE PREVIOUS DATA;
-//    retrievePreviousDaysData();
-
-    //retrieve data of previous days
-    retrievePreviousCurrentDayData();
+function restoreTodayTime() {
+    const today = getTodayKey();
+    const timeStr = DateToWorkingHoursMap.get(today);
+    if (!timeStr) return;
+    restoreTimeFromString(timeStr);
 }
 
-export function init(){
+function renderWorkLog() {
+    const logContainer = document.getElementById("log");
+    logContainer.innerHTML = getDateWorkingHoursTable();
+}
 
-    console.log("Init called..");
+
+export function init() {
     loadMap();
-
-    console.log("Going to update log and stopwatch...");
-
-    //create stop watch instance
-    console.log("new stopwatch instance set");
     sw = new Stopwatch();
-    
-    retrievePreviousLogData();
+
+    restoreTodayTime();   // state
+    renderWorkLog();      // UI
 }
 
 function setFavicon(src){
@@ -208,12 +193,78 @@ function convertWorkingHoursTimeElapsedInSecondsToStr(timeElapsedInSeconds){
     var minutes = Math.floor(timeElapsedInSeconds/60)%60;
     var hours = Math.floor(timeElapsedInSeconds/3600)%24;
 
-    var timeString = (getLengthAdjustedTimeUnitString(hours.toString()) + ":" +
-                      getLengthAdjustedTimeUnitString(minutes.toString()) + ":" +
-                      getLengthAdjustedTimeUnitString(seconds.toString()));
+    var timeString = (pad(hours.toString()) + ":" +
+                      pad(minutes.toString()) + ":" +
+                      pad(seconds.toString()));
 
     return timeString;
 }
+
+function renderDayRow(day, dateLabel, workingHours) {
+    return `
+        <tr>
+            <td class="logItem">${day}</td>
+            <td class="logItem"> | ${dateLabel}</td>
+            <td class="logItem"> | ${workingHours}</td>
+        </tr>
+    `;
+}
+
+function renderWeekTotalRow(totalSeconds) {
+    const total = convertWorkingHoursTimeElapsedInSecondsToStr(totalSeconds);
+
+    return `
+        <tr>
+            <th class="logItem"></th>
+            <th class="logItem"></th>
+            <th class="logItem"> | ${total}</th>
+        </tr>
+    `;
+}
+
+function getDateWorkingHoursTable() {
+    const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    // Sort entries descending (newest first)
+    const entries = [...DateToWorkingHoursMap.entries()]
+      .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA));
+
+    let rows = [];
+    let lastWeek = null;
+    let weeklyTotalSeconds = 0;
+
+    for (const [dateStr, workingHours] of entries) {
+        const date = new Date(dateStr);
+        const week = date.getWeek();
+
+        const dayName = DAYS[date.getDay()];
+        const monthName = MONTHS[date.getMonth()];
+        const dateLabel = `${pad(date.getDate())} ${monthName} ${date.getFullYear()}`;
+
+
+        const daySeconds = convertWorkingHoursStrToTimeElapsedInSeconds(workingHours);
+
+        // Week change → insert summary row
+        if (lastWeek !== null && week !== lastWeek) {
+            rows.push(renderWeekTotalRow(weeklyTotalSeconds));
+            weeklyTotalSeconds = 0;
+        }
+
+        weeklyTotalSeconds += daySeconds;
+        lastWeek = week;
+
+        rows.push(renderDayRow(dayName, dateLabel, workingHours));
+    }
+
+    // final week summary
+    if (weeklyTotalSeconds > 0) {
+        rows.push(renderWeekTotalRow(weeklyTotalSeconds));
+    }
+
+    return `<table>${rows.join("")}</table>`;
+}
+
 
 /*
 function getDateWorkingHoursTable() {

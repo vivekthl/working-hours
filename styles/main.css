@@ -6,13 +6,14 @@ body {
 }
 
 .container {
-    width:250px;
-    height:200px;
+    width: 250px;
+    max-width: 90vw;
 
-    position:relative;
-    left:0; top:60; right:0; bottom:0;
-    
-    margin:auto;
+    margin: 60px auto 0;   /* top space + horizontal centering */
+
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .clock {
@@ -24,8 +25,8 @@ body {
 }
 
 .menuItem {
-    cursor:pointer;
-    margin-bottom:10%;
+    cursor: pointer;
+    margin-bottom: 0.75rem;
 }
 
 .menuItem:hover {
