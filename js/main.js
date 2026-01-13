@@ -255,48 +255,44 @@ function renderWeekTotalRow(totalSeconds) {
 }
 
 function getDateWorkingHoursTable() {
-    const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-    // Sort entries descending (newest first)
-    const entries = [...DateToWorkingHoursMap.entries()]
-      .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA));
+    let lastWeekNumber = null;
+    let tableRows = "";
 
-    let rows = [];
-    let lastWeek = null;
-    let weeklyTotalSeconds = 0;
-
-    for (const [dateStr, workingHours] of entries)
-    {
+    for (let [dateStr, workingHours] of [...DateToWorkingHoursMap].reverse()) {
         const date = new Date(dateStr);
-        const week = date.getWeek();
+        const weekNumber = date.getWeek();
 
-        const dayName = DAYS[date.getDay()];
-        const monthName = MONTHS[date.getMonth()];
-        const dateLabel = `${pad(date.getDate())} ${monthName} ${date.getFullYear()}`;
-
-        const daySeconds = convertWorkingHoursStrToTimeElapsedInSeconds(workingHours);
-
-        // Week change → insert summary row
-        if (lastWeek !== null && week !== lastWeek) {
-            rows.push(renderWeekTotalRow(weeklyTotalSeconds));
-            weeklyTotalSeconds = 0;
+        // 🔹 Insert separator when week changes
+        if (lastWeekNumber !== null && weekNumber !== lastWeekNumber) {
+            tableRows += `
+                <tr class="week-separator">
+                    <td colspan="4"></td>
+                </tr>
+            `;
         }
 
-        weeklyTotalSeconds += daySeconds;
-        lastWeek = week;
+        const dayName = days[date.getDay()];
+        const dateLabel =
+            `${String(date.getDate()).padStart(2, "0")} ${months[date.getMonth()]} ${date.getFullYear()}`;
 
-        // Pass the dateKey so delete button knows which entry to remove
-        rows.push(renderDayRow(dayName, dateLabel, workingHours, dateStr));
+        tableRows += `
+            <tr>
+                <td class="logItem">${dayName}</td>
+                <td class="logItem"> | ${dateLabel}</td>
+                <td class="logItem"> | ${workingHours}</td>
+                <td class="logItem">
+                    <button class="deleteEntryBtn" data-key="${dateStr}">X</button>
+                </td>
+            </tr>
+        `;
+
+        lastWeekNumber = weekNumber;
     }
 
-
-    // final week summary
-    if (weeklyTotalSeconds > 0) {
-        rows.push(renderWeekTotalRow(weeklyTotalSeconds));
-    }
-
-    return `<table>${rows.join("")}</table>`;
+    return `<table class="workLogTable">${tableRows}</table>`;
 }
 
 
