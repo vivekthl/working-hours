@@ -46,6 +46,10 @@ body {
     color: darkred;
 }
 
+.log {
+    font-size: 1rem;
+}
+
 
 /*
  .log {
