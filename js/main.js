@@ -161,14 +161,14 @@ export function buttonClick(){
 }
 
 function start(){
-    setFavicon("https://raw.githubusercontent.com/vivekthl/working-hours-assets/refs/heads/main/ico/running.ico");
+    setFavicon("assets/running.svg");
     sw.start();
     timerId = setInterval(updateClock, 200);
 }
 
 
 function stop(){
-    setFavicon("https://raw.githubusercontent.com/vivekthl/working-hours-assets/refs/heads/main/ico/paused.ico");
+    setFavicon("assets/paused.svg");
     clearInterval(timerId);
     sw.stop();
     updateClock();
