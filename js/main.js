@@ -279,7 +279,7 @@ function getDateWorkingHoursTable() {
             `${String(date.getDate()).padStart(2, "0")} ${months[date.getMonth()]} ${date.getFullYear()}`;
 
         tableRows += `
-            <tr>
+            <tr style="font-size:0.9rem">
                 <td class="logItem">${dayName}</td>
                 <td class="logItem"> | ${dateLabel}</td>
                 <td class="logItem"> | ${workingHours}</td>
