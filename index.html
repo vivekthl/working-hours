@@ -12,9 +12,7 @@
 
 <div class="container" >
   <div class="clock" id="clock">
-    <span id="hours">00</span>
-    <span id="minutes">00</span>
-    <span id="seconds">00</span>
+    <span id="hours">00</span><span>:</span><span id="minutes">00</span><span>:</span><span id="seconds">00</span>
   </div>
   
   <div class="menu">
@@ -43,10 +41,16 @@
     
   </div>
 
+  <details class="laps" id="laps">
+    <summary>Today's laps (<span id="lapCount">0</span>)<span id="longestLap"></span></summary>
+    <table class="lapTable"><tbody id="lapRows"></tbody></table>
+  </details>
 
-  <div class="log" id="log">
-    
-  </div>  
+
+  <details class="workLog" id="workLog" open>
+    <summary>Work log (<span id="workLogCount">0</span> days)</summary>
+    <div class="log" id="log"></div>
+  </details>  
 
 </div>
   

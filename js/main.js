@@ -4,6 +4,10 @@ var sw;
 var timerId;
 var DateToWorkingHoursMap;
 
+const DAY_KEY_PATTERN = /^\d{4}\/\d{2}\/\d{2}$/;
+// storage key name predates the "Laps" rename; kept so saved data still loads
+const SPLITS_PREFIX = "timestamps:";
+
 // key handlers
 export function startStopButtonKeyHandler(event)
 {
@@ -49,9 +53,23 @@ function updateDisplay(){
 
 function updateClock() {
     updateDisplay();
-    DateToWorkingHoursMap.set(getTodayKey(), sw.getTimeAsString());
+    const todayKey = getTodayKey();
+    const isNewDay = !DateToWorkingHoursMap.has(todayKey);
+    const timeStr = sw.getTimeAsString();
+    DateToWorkingHoursMap.set(todayKey, timeStr);
     persistData();
-    
+    refreshWorkLogEntry(todayKey, timeStr, isNewDay);
+}
+
+// Keep the Work Log in step with the clock without rebuilding it every tick:
+// a new day needs a new row, otherwise just update today's hours cell.
+function refreshWorkLogEntry(dayKey, timeStr, isNewDay) {
+    const cell = document.querySelector(`.logHours[data-key="${dayKey}"]`);
+    if (isNewDay || !cell) {
+        renderWorkLog();
+    } else if (cell.textContent !== timeStr) {
+        cell.textContent = timeStr;
+    }
 }
 
 function getTodayKey() {
@@ -131,6 +149,77 @@ export function init() {
 
     restoreTodayTime();   // state
     renderWorkLog();      // UI
+    renderLaps();
+}
+
+// ---- Laps: stopwatch readings (Splits) recorded at each start/stop ----
+
+function loadSplits(dayKey) {
+    try {
+        return JSON.parse(localStorage.getItem(SPLITS_PREFIX + dayKey)) || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function recordSplit(type) {
+    const dayKey = getTodayKey();
+    const splits = loadSplits(dayKey);
+    splits.push({type: type, value: getStopwatchSeconds()});
+    localStorage.setItem(SPLITS_PREFIX + dayKey, JSON.stringify(splits));
+    renderLaps();
+}
+
+function getStopwatchSeconds() {
+    return sw.getHours() * 3600 + sw.getMinutes() * 60 + sw.getSeconds();
+}
+
+// e.g. 3721 -> "1h 2m 1s", 61 -> "1m 1s", 0 -> "0s"
+function formatDuration(totalSeconds) {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor(totalSeconds / 60) % 60;
+    const s = totalSeconds % 60;
+    const parts = [];
+    if (h) parts.push(`${h}h`);
+    if (h || m) parts.push(`${m}m`);
+    parts.push(`${s}s`);
+    return parts.join(" ");
+}
+
+function renderLaps() {
+    // ignore entries saved by the earlier wall-clock version
+    const splits = loadSplits(getTodayKey())
+          .filter(split => typeof split.value === "number");
+    const laps = splits.slice(1).map((split, i) => split.value - splits[i].value);
+    document.getElementById("lapCount").textContent = laps.length;
+
+    const longest = Math.max(0, ...laps);
+    document.getElementById("longestLap").textContent =
+        longest > 0 ? ` · longest ${formatDuration(longest)}` : "";
+    let longestMarked = false; // only mark the first lap if several tie
+
+    const rows = splits.map((split, i) => {
+        let lap = "";
+        let rowClass = "";
+        if (i > 0) {
+            const seconds = laps[i - 1];
+            lap = `${seconds < 0 ? "-" : "+"}${formatDuration(Math.abs(seconds))}`;
+            if (seconds === longest && longest > 0 && !longestMarked) {
+                rowClass = "longestLap";
+                longestMarked = true;
+            }
+        }
+        return `
+            <tr class="${rowClass}">
+                <td>${convertWorkingHoursTimeElapsedInSecondsToStr(split.value)}</td>
+                <td class="lapTime">${lap}</td>
+            </tr>
+        `;
+    });
+
+    document.getElementById("lapRows").innerHTML =
+        rows.reverse().join("") || // most recent first
+        `<tr><td colspan="2">No laps yet today</td></tr>`;
 }
 
 function setFavicon(src){
@@ -161,6 +250,7 @@ export function buttonClick(){
 }
 
 function start(){
+    recordSplit("start");
     setFavicon("assets/running.svg");
     sw.start();
     timerId = setInterval(updateClock, 200);
@@ -171,6 +261,7 @@ function stop(){
     setFavicon("assets/paused.svg");
     clearInterval(timerId);
     sw.stop();
+    recordSplit("stop");
     updateClock();
 }
 
@@ -218,6 +309,8 @@ export function deleteLogEntry(dateKey) {
 
     // Remove from localStorage
     localStorage.removeItem(dateKey);
+    localStorage.removeItem(SPLITS_PREFIX + dateKey);
+    renderLaps();
 
     // Re-render the log
     const logContainer = document.getElementById("log");
@@ -279,11 +372,11 @@ function getDateWorkingHoursTable() {
             `${String(date.getDate()).padStart(2, "0")} ${months[date.getMonth()]} ${date.getFullYear()}`;
 
         tableRows += `
-            <tr style="font-size:0.9rem">
-                <td class="logItem">${dayName}</td>
-                <td class="logItem"> | ${dateLabel}</td>
-                <td class="logItem"> | ${workingHours}</td>
-                <td class="logItem">
+            <tr>
+                <td>${dayName}</td>
+                <td>${dateLabel}</td>
+                <td class="logHours" data-key="${dateStr}">${workingHours}</td>
+                <td class="logDelete">
                     <button class="deleteEntryBtn" data-key="${dateStr}">X</button>
                 </td>
             </tr>
@@ -292,6 +385,7 @@ function getDateWorkingHoursTable() {
         lastWeekNumber = weekNumber;
     }
 
+    document.getElementById("workLogCount").textContent = DateToWorkingHoursMap.size;
     return `<table class="workLogTable">${tableRows}</table>`;
 }
 
@@ -368,8 +462,9 @@ function loadMap()
 {
     var mapTemp = new Map();
     for (var i = 0; i < localStorage.length; i++){
-        mapTemp.set(localStorage.key(i),
-                    localStorage.getItem(localStorage.key(i)));
+        const key = localStorage.key(i);
+        if (!DAY_KEY_PATTERN.test(key)) continue; // skip stored splits etc.
+        mapTemp.set(key, localStorage.getItem(key));
     }
 
     var sortedMap = new Map([...mapTemp].sort());
